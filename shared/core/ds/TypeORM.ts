@@ -1,0 +1,53 @@
+import { Connection, ConnectionOptions, EntityManager, createConnection } from 'typeorm';
+
+import { UserEntity } from '../../models';
+
+const ENTITIES = [UserEntity];
+
+export const singletonConfig: ConnectionOptions = {
+	type: 'mysql',
+	host: 'localhost',
+	port: 3306,
+	database: process.env.DB_NAME || 'whois_bot',
+	username: process.env.DB_USER || 'sareth',
+	password: process.env.DB_PASS || 'root',
+	maxQueryExecutionTime: 1000,
+	entities: ENTITIES,
+	extra: { max: 100 },
+	synchronize: true,
+};
+
+export class TypeORM{
+
+	static connection?: Connection;
+	static masterEntityManager?: EntityManager;
+
+	// ----------------------------
+
+	static async connect(): Promise<void | never>{
+		if(this.connection?.isConnected){
+			return;
+		}
+
+		// Create new connection
+		this.connection = await createConnection(singletonConfig);
+		this.masterEntityManager = this.connection.createEntityManager(this.connection.createQueryRunner('master'));
+	}
+
+	// ----------------------------
+
+	static async stop(): Promise<void | never> {
+		if (this.connection === undefined || !this.connection.isConnected) {
+			return;
+		}
+
+		await this.connection.close();
+		this.connection = undefined;
+	}
+
+	// ----------------------------
+
+	static async query(sql: string): Promise<any> {
+		return this.connection?.query(sql);
+	}
+}
