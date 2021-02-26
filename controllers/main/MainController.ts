@@ -10,7 +10,9 @@ export class MainController extends Controller {
 		const message = `Бот помогает найти информацию о людях.
 		Участие их в уголовных, гражданских, административных и иных процессах,
 		наличие долгов и характеристик на них.
-		- Пример запроса
+
+		- Пример запроса:
+		
 		Иванов Иван Иванович (Иванов ИИ, Иванов Иван И,
 		Иванов И Иванович, Иванов), Москва, Тверская,
 		17, 10.12.1988 года рождения (Указывается регион,
@@ -31,7 +33,7 @@ export class MainController extends Controller {
 			],
 		]);
 	
-		await ctx.replyWithHTML(message, Extra.markup(keyboard.resize(true)));
+		await ctx.replyWithHTML(Messages.compileMessage(message), Extra.markup(keyboard.resize(true)));
 	}
 
 	@Command('settings')
