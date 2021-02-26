@@ -1,13 +1,13 @@
 import { TelegrafContext } from 'telegraf/typings/context';
 
 import { TelegramBot } from './shared/core/bot/TelegramBot';
-import { MainController } from './controllers';
+import { MainController, ReportController } from './controllers';
 import { MosGorsudService } from './shared/services/MosGorsudService';
-import { Messages } from './shared/messages';
 
 export const BOT = new TelegramBot('460397887:AAGlqk1TMcUapldnIeD9NmIXZgUTGQmdaLI');
 
 BOT.loadController(MainController);
+BOT.loadController(ReportController);
 
 BOT.on('message', async (ctx: TelegrafContext) => {
 	const text = ctx.message?.text;

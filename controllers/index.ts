@@ -1,1 +1,2 @@
-export * from './main/MainController';
+export * from './MainController';
+export * from './ReportController';
