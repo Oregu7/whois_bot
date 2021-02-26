@@ -28,7 +28,7 @@ export class UserEntity extends ModelEntity {
 	@Column('varchar', { length: 5 })
 	lang: Lang = Lang.ru;
 
-	@Column('numeric')
+	@Column('integer')
 	balance: number = 0;
 
 	// ============================

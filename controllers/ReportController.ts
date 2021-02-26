@@ -34,4 +34,11 @@ export class ReportController extends Controller {
 
 		await ctx.replyWithHTML(message);
 	}
+
+	@Pattern('Промокод')
+	static async promoCode(ctx: Context) {
+		const message = 'Вы можете активировать промокод, чтобы пополнить кол-во доступных отчетов.';
+
+		await ctx.replyWithHTML(message);
+	}
 }

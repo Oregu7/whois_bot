@@ -130,7 +130,7 @@
 		"eol-last": "error",
 		"eqeqeq": "error",
 		"guard-for-in": "error",
-		"linebreak-style": ["error", "unix"],
+		"linebreak-style": ["error", "windows"],
 		"max-len": [
 			"error",
 			{

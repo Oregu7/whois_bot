@@ -10,4 +10,3 @@ if (require.main === module) {
 		BOT.startPolling();
 	})();
 }
-

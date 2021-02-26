@@ -1,16 +1,17 @@
 import { Connection, ConnectionOptions, EntityManager, createConnection } from 'typeorm';
 
+import { config } from '../../config';
 import { UserEntity } from '../../models';
 
 const ENTITIES = [UserEntity];
 
 export const singletonConfig: ConnectionOptions = {
 	type: 'mysql',
-	host: 'localhost',
+	host: config.database.host,
 	port: 3306,
-	database: process.env.DB_NAME || 'whois_bot',
-	username: process.env.DB_USER || 'sareth',
-	password: process.env.DB_PASS || 'root',
+	database: config.database.name,
+	username: config.database.user,
+	password: config.database.password,
 	maxQueryExecutionTime: 1000,
 	entities: ENTITIES,
 	extra: { max: 100 },
