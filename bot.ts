@@ -1,11 +1,12 @@
 import { TelegrafContext } from 'telegraf/typings/context';
 
+import { config } from './shared/config';
 import { TelegramBot } from './shared/core/bot/TelegramBot';
 import { MainController, ReportController } from './controllers';
 import { MosGorsudService } from './shared/services/MosGorsudService';
 import { Messages } from './shared/messages';
 
-export const BOT = new TelegramBot('460397887:AAGlqk1TMcUapldnIeD9NmIXZgUTGQmdaLI');
+export const BOT = new TelegramBot(config.bot.token);
 
 BOT.loadController(MainController);
 BOT.loadController(ReportController);
