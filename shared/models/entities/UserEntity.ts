@@ -1,3 +1,4 @@
+import { Context } from 'telegraf';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 import { Lang, UserStatus, UserType } from '../types';
@@ -29,4 +30,22 @@ export class UserEntity extends ModelEntity {
 
 	@Column('numeric')
 	balance: number = 0;
+
+	// ============================
+	// STATIC METHODS
+	// ============================
+
+	static async createFromCTX(ctx: Context) {
+		const user = this.create({
+			id: ctx.from?.id,
+			firstName: ctx.from?.first_name,
+			lastName: ctx.from?.last_name,
+			username: ctx.from?.username,
+		});
+
+		await user.save();
+
+		return user;
+	}
+	 
 }

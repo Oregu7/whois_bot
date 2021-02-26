@@ -1,7 +1,8 @@
 import { Context, Extra, Markup } from 'telegraf';
 
-import { Controller, Command, Pattern } from '../../shared/core/bot/Controller';
-import { Messages } from '../../shared/messages/';
+import { Controller, Command, Pattern } from '../shared/core/bot/Controller';
+import { Messages } from '../shared/messages';
+import { UserEntity } from '../shared/models';
 
 export class MainController extends Controller {
 
@@ -30,6 +31,8 @@ export class MainController extends Controller {
 				Markup.button('Промокод'),
 			],
 		]);
+
+		await UserEntity.createFromCTX(ctx);
 	
 		await ctx.replyWithHTML(message, Extra.markup(keyboard.resize(true)));
 	}
@@ -50,4 +53,3 @@ export class MainController extends Controller {
 		await ctx.replyWithHTML(Messages.main.report.text);
 	}
 }
-
