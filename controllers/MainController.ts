@@ -45,9 +45,9 @@ export class MainController extends Controller {
 	}
 
 	@Pattern('Как пользоваться')
-	@Command('about')
-	static async about(ctx: Context) {
-		await ctx.replyWithHTML(Messages.main.about.text);
+	@Command('help')
+	static async help(ctx: Context) {
+		await ctx.replyWithHTML(Messages.main.help.text);
 	}
 
 	@Command('report')

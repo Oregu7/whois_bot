@@ -25,3 +25,5 @@ BOT.on('message', async (ctx: TelegrafContext) => {
 
 	await ctx.reply(Messages.compileMessage(report));
 });
+
+BOT.catch(console.error);
