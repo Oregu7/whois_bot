@@ -7,6 +7,6 @@ if (require.main === module) {
 
 		await BOT.telegram.deleteWebhook();
 		
-		BOT.startPolling();
+		BOT.launch();
 	})();
 }

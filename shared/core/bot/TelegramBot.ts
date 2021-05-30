@@ -1,9 +1,9 @@
 import { Telegraf } from 'telegraf';
-import { TelegrafContext } from 'telegraf/typings/context';
+import { Context } from 'telegraf/typings/context';
 
 import { Controller } from './Controller';
 
-export class TelegramBot extends Telegraf<TelegrafContext> {
+export class TelegramBot extends Telegraf<Context> {
 
 	loadController(controller: typeof Controller) {
 		// 1. load commands

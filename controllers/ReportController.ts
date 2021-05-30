@@ -1,13 +1,17 @@
-import { Context, Extra, Markup } from 'telegraf';
+import { Context } from 'telegraf';
 
 import { Controller, Pattern } from '../shared/core/bot/Controller';
+import { Messages } from '../shared/messages';
 import { UserEntity } from '../shared/models';
+
+
+type ContextMatch = Context & { match: RegExpExecArray };
 
 export class ReportController extends Controller {
 
 	@Pattern(/^\d+ р - (\d+) отчет(ов)?$/)
-	static async buyReports(ctx: Context) {
-		const reportsCount: number = Number(ctx.match![1]);
+	static async buyReports(ctx: ContextMatch) {
+		const reportsCount: number = Number(ctx.match[1]);
 
 		const user = await UserEntity.findOne(ctx.from?.id);
 
@@ -16,29 +20,24 @@ export class ReportController extends Controller {
 			await user.save();
 		}
 
-		const message = `Покупка ${reportsCount} отчетов. Подтвердите оплату в Робокассе`;
-		const keyboard = Markup.inlineKeyboard([
-			Markup.urlButton('Ссылка на робокассу', 'https://robokassa.com'),
-		]);
+		const { message, extra } = Messages.report.buyReports(reportsCount);
 
-		await ctx.replyWithHTML(message, Extra.markup(keyboard));
+		await ctx.reply(message, extra);
 	}
 
 	@Pattern('Остаток запросов')
 	static async showBalance(ctx: Context) {
 		const user = await UserEntity.findOne(ctx.from?.id);
 
-		const userBalance = user?.balance || 0;
+		const { message, extra } = Messages.report.balance(user!);
 
-		const message = `Остаток ваших запроосв: ${userBalance}`;
-
-		await ctx.replyWithHTML(message);
+		await ctx.reply(message, extra);
 	}
 
 	@Pattern('Промокод')
 	static async promoCode(ctx: Context) {
-		const message = 'Вы можете активировать промокод, чтобы пополнить кол-во доступных отчетов.';
+		const { message, extra } = Messages.report.promoCode();
 
-		await ctx.replyWithHTML(message);
+		await ctx.reply(message, extra);
 	}
 }
