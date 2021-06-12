@@ -16,6 +16,14 @@ BOT.on('message', async (ctx: Context) => {
 
 	const data = await MosGorsudService.search(text);
 
+	if (data.length === 0) {
+		await ctx.replyWithHTML(`Данные по запросу не найдены!`, {
+			reply_to_message_id: ctx.message?.message_id,
+		});
+
+		return;
+	}
+
 	const reportMessage = data.slice(0, 5).map((courtCase: CourtCase) => {
 		const report = `<b>Запрос: ${courtCase.person} - ${courtCase.court}</b>
 		<b>Категория дела: ${courtCase.type}</b>
