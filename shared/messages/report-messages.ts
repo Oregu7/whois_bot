@@ -5,7 +5,7 @@ import { UserEntity } from '../models';
 
 
 export function balance(user: UserEntity): Message {
-	const text = `↔️ У Вас осталось <b>${user?.balance || 0}</b> отчетов`;
+	const text = `↔️ У Вас осталось <b>${user?.balance || 0}</b> отчет(ов)`;
 
 	return MessageBuilder.createMessage(text);
 }

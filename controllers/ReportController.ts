@@ -9,7 +9,7 @@ type ContextMatch = Context & { match: RegExpExecArray };
 
 export class ReportController extends Controller {
 
-	@Pattern(/^\d+ р - (\d+) отчет(ов)?$/)
+	@Pattern(/^\d+ ₽ - (\d+) отчет(ов)?$/)
 	static async buyReports(ctx: ContextMatch) {
 		const reportsCount: number = Number(ctx.match[1]);
 
@@ -25,7 +25,7 @@ export class ReportController extends Controller {
 		await ctx.reply(message, extra);
 	}
 
-	@Pattern('Остаток запросов')
+	@Pattern('Остаток отчетов')
 	static async showBalance(ctx: Context) {
 		const user = await UserEntity.findOne(ctx.from?.id);
 
