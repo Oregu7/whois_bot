@@ -2,7 +2,8 @@ import { Context } from 'telegraf';
 
 import { Controller, Command, Pattern } from '../shared/core/bot/Controller';
 import { Messages } from '../shared/messages';
-import { UserEntity } from '../shared/models';
+import { PromocodeEntity, UserEntity } from '../shared/models';
+import { ContextMatch } from '../shared/models/types';
 
 export class MainController extends Controller {
 
@@ -35,5 +36,26 @@ export class MainController extends Controller {
 		const { message, extra } = Messages.main.report();
 
 		await ctx.reply(message, extra);
+	}
+
+	@Pattern(/^\/promo (\d+)$/)
+	static async createPromocodes(ctx: ContextMatch) {
+		const promocodesCount: number = Number(ctx.match[1]);
+		const promocodes: PromocodeEntity[] = [];
+
+		let promocodeMessage = '';
+
+		for (let i = 0; i < promocodesCount; i++) {
+			const promocode = new PromocodeEntity();
+			promocode.adminID = ctx.from!.id;
+
+			promocodeMessage += `${promocode.token}\n`;
+
+			promocodes.push(promocode);
+		}
+
+		await PromocodeEntity.create(promocodes);
+
+		await ctx.reply(promocodeMessage);
 	}
 }

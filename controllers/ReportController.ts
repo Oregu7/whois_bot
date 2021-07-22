@@ -3,9 +3,8 @@ import { Context } from 'telegraf';
 import { Controller, Pattern } from '../shared/core/bot/Controller';
 import { Messages } from '../shared/messages';
 import { UserEntity } from '../shared/models';
+import { ContextMatch } from '../shared/models/types';
 
-
-type ContextMatch = Context & { match: RegExpExecArray };
 
 export class ReportController extends Controller {
 
