@@ -30,7 +30,7 @@ export class MainController extends Controller {
 			return;
 		}
 
-		if (promocode.status !== PromocodeStatus.draft) {
+		if (promocode.status !== PromocodeStatus.active) {
 			await ctx.replyWithHTML(`Промокод: <b>${promoToken}</b> уже активирован!`);
 
 			return;
@@ -43,7 +43,7 @@ export class MainController extends Controller {
 		user.balance += promocode.balance;
 		await user.save();
 
-		await ctx.replyWithHTML(`Вы успешно активировали Промокод на: <b>${promocode.balance}</b> отчетов.\n\n Ваш текщий баланс: <b>${user.balance}</b>`);
+		await ctx.replyWithHTML(`Вы успешно активировали Промокод на: <b>${promocode.balance}</b> отчет(ов).\n\n Ваш текщий баланс: <b>${user.balance}</b>`);
 	}
 
 	@Command('settings')
@@ -84,7 +84,7 @@ export class MainController extends Controller {
 			promocodes.push(promocode);
 		}
 
-		await PromocodeEntity.create(promocodes);
+		await PromocodeEntity.insert(promocodes);
 
 		await ctx.reply(promocodeMessage);
 	}
