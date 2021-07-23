@@ -35,7 +35,13 @@ export class UserEntity extends ModelEntity {
 	// STATIC METHODS
 	// ============================
 
-	static async createFromCTX(ctx: Context) {
+	static async getOrCreateFromCTX(ctx: Context) {
+		const userDB = await this.findOne(ctx.from?.id);
+
+		if (userDB !== undefined) {
+			return userDB;
+		}
+
 		const user = this.create({
 			id: ctx.from?.id,
 			firstName: ctx.from?.first_name,
@@ -47,5 +53,4 @@ export class UserEntity extends ModelEntity {
 
 		return user;
 	}
-	 
 }

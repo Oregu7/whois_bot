@@ -3,17 +3,47 @@ import { Context } from 'telegraf';
 import { Controller, Command, Pattern } from '../shared/core/bot/Controller';
 import { Messages } from '../shared/messages';
 import { PromocodeEntity, UserEntity } from '../shared/models';
-import { ContextMatch } from '../shared/models/types';
+import { ContextMatch, PromocodeStatus } from '../shared/models/types';
 
 export class MainController extends Controller {
 
 	@Command('start')
 	static async start(ctx: Context) {
-		const { message, extra } = Messages.main.start();
-		
-		await UserEntity.createFromCTX(ctx);
+		const { text = '', entities = [] } = ctx.message as any;
+
+		const user = await UserEntity.getOrCreateFromCTX(ctx);
+
+		if (entities.legth === 0) {
+			const { message, extra } = Messages.main.start();
+			await ctx.reply(message, extra);
+
+			return;
+		}
 	
-		await ctx.reply(message, extra);
+		const promoToken = text.slice(entities[0].length).trim();
+
+		const promocode = await PromocodeEntity.findOne({ token: promoToken });
+
+		if (promocode === undefined) {
+			await ctx.replyWithHTML(`Промокод: <b>${promoToken}</b> не найден!`);
+
+			return;
+		}
+
+		if (promocode.status !== PromocodeStatus.draft) {
+			await ctx.replyWithHTML(`Промокод: <b>${promoToken}</b> уже активирован!`);
+
+			return;
+		}
+
+		promocode.status = PromocodeStatus.done;
+		promocode.userID = ctx.from!.id;
+		await promocode.save();
+
+		user.balance += promocode.balance;
+		await user.save();
+
+		await ctx.replyWithHTML(`Вы успешно активировали Промокод на: <b>${promocode.balance}</b> отчетов.\n\n Ваш текщий баланс: <b>${user.balance}</b>`);
 	}
 
 	@Command('settings')
