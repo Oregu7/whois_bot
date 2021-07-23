@@ -13,8 +13,8 @@ export class PromocodeEntity extends ModelEntity {
 	@Column('smallint')
 	status: PromocodeStatus = PromocodeStatus.active;
 
-	@Column('integer')
-	userID!: number;
+	@Column('integer', { nullable: true })
+	userID: number | null = null;
 
 	@Column('integer')
 	adminID!: number;
