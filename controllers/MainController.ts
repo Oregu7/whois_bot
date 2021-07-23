@@ -1,49 +1,58 @@
 import { Context } from 'telegraf';
+import { getConnection } from 'typeorm';
 
 import { Controller, Command, Pattern } from '../shared/core/bot/Controller';
 import { Messages } from '../shared/messages';
 import { PromocodeEntity, UserEntity } from '../shared/models';
 import { ContextMatch, PromocodeStatus } from '../shared/models/types';
+import { config } from '../shared/config';
 
 export class MainController extends Controller {
 
 	@Command('start')
 	static async start(ctx: Context) {
 		const { text = '', entities = [] } = ctx.message as any;
-
+		
+		// 1.
 		const user = await UserEntity.getOrCreateFromCTX(ctx);
 
-		if (entities.legth === 0) {
+		if (entities[0]?.length === text.length) {
 			const { message, extra } = Messages.main.start();
 			await ctx.reply(message, extra);
 
 			return;
 		}
 	
+		// 2.
 		const promoToken = text.slice(entities[0].length).trim();
-
 		const promocode = await PromocodeEntity.findOne({ token: promoToken });
+		const { extra: mainMessageExtra } = Messages.main.start();
 
 		if (promocode === undefined) {
-			await ctx.replyWithHTML(`Промокод: <b>${promoToken}</b> не найден!`);
+			const { message, extra } = Messages.promocode.notFound(promoToken);
+			await ctx.replyWithHTML(message, { ...mainMessageExtra, ...extra });
 
 			return;
 		}
 
 		if (promocode.status !== PromocodeStatus.active) {
-			await ctx.replyWithHTML(`Промокод: <b>${promoToken}</b> уже активирован!`);
+			const { message, extra } = Messages.promocode.alreadyUsed(promoToken);
+			await ctx.replyWithHTML(message, { ...mainMessageExtra, ...extra });
 
 			return;
 		}
 
-		promocode.status = PromocodeStatus.done;
-		promocode.userID = ctx.from!.id;
-		await promocode.save();
+		await getConnection().transaction(async (transactionalEntityManager) => {
+			promocode.status = PromocodeStatus.done;
+			promocode.userID = ctx.from!.id;
+			await transactionalEntityManager.save(promocode);
 
-		user.balance += promocode.balance;
-		await user.save();
+			user.balance += promocode.balance;
+			await transactionalEntityManager.save(user);
+		});
 
-		await ctx.replyWithHTML(`Вы успешно активировали Промокод на: <b>${promocode.balance}</b> отчет(ов).\n\n Ваш текщий баланс: <b>${user.balance}</b>`);
+		const { message, extra } = Messages.promocode.successfullyActivated(promocode, user);
+		await ctx.replyWithHTML(message, { ...mainMessageExtra, ...extra });
 	}
 
 	@Command('settings')
@@ -79,13 +88,13 @@ export class MainController extends Controller {
 			const promocode = new PromocodeEntity();
 			promocode.adminID = ctx.from!.id;
 
-			promocodeMessage += `${promocode.token}\n`;
+			promocodeMessage += `<b>${i + 1}.</b> https://t.me/${config.bot.username}?start=${promocode.token}\n`;
 
 			promocodes.push(promocode);
 		}
 
 		await PromocodeEntity.insert(promocodes);
 
-		await ctx.reply(promocodeMessage);
+		await ctx.replyWithHTML(promocodeMessage, { disable_web_page_preview: true });
 	}
 }

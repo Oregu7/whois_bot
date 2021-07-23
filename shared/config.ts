@@ -9,6 +9,7 @@ dotenv.config();
 const REQUIRED_VARIABLES = [
 	'NODE_ENV',
 	'BOT_TOKEN',
+	'BOT_USERNAME',
 	'DB_NAME',
 	'DB_USER',
 	'DB_PASS',
@@ -28,6 +29,7 @@ export const config = {
 	env: process.env.NODE_ENV,
 	bot: {
 		token: process.env.BOT_TOKEN!,
+		username: process.env.BOT_USERNAME!,
 	},
 	database: {
 		name: process.env.DB_NAME!,
