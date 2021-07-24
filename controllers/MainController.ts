@@ -1,10 +1,9 @@
 import { Context } from 'telegraf';
-import { getConnection } from 'typeorm';
 
 import { Controller, Command, Pattern } from '../shared/core/bot/Controller';
 import { Messages } from '../shared/messages';
 import { PromoCodeEntity, UserEntity } from '../shared/models';
-import { ContextMatch, PromocodeStatus } from '../shared/models/types';
+import { ContextMatch } from '../shared/models/types';
 import { config } from '../shared/config';
 
 export class MainController extends Controller {
@@ -15,44 +14,19 @@ export class MainController extends Controller {
 		
 		// 1.
 		const user = await UserEntity.getOrCreateFromCTX(ctx);
+		const mainMessage = Messages.main.start();
 
 		if (entities[0]?.length === text.length) {
-			const { message, extra } = Messages.main.start();
-			await ctx.reply(message, extra);
+			await ctx.reply(mainMessage.message, mainMessage.extra);
 
 			return;
 		}
 	
 		// 2.
 		const promoToken = text.slice(entities[0].length).trim();
-		const promocode = await PromoCodeEntity.findOne({ token: promoToken });
-		const { extra: mainMessageExtra } = Messages.main.start();
+		const { message, extra } = await PromoCodeEntity.checkPromoCode(promoToken, user);
 
-		if (promocode === undefined) {
-			const { message, extra } = Messages.promocode.notFound(promoToken);
-			await ctx.replyWithHTML(message, { ...mainMessageExtra, ...extra });
-
-			return;
-		}
-
-		if (promocode.status !== PromocodeStatus.active) {
-			const { message, extra } = Messages.promocode.alreadyUsed(promoToken);
-			await ctx.replyWithHTML(message, { ...mainMessageExtra, ...extra });
-
-			return;
-		}
-
-		await getConnection().transaction(async (transactionalEntityManager) => {
-			promocode.status = PromocodeStatus.done;
-			promocode.userID = ctx.from!.id;
-			await transactionalEntityManager.save(promocode);
-
-			user.balance += promocode.balance;
-			await transactionalEntityManager.save(user);
-		});
-
-		const { message, extra } = Messages.promocode.successfullyActivated(promocode, user);
-		await ctx.replyWithHTML(message, { ...mainMessageExtra, ...extra });
+		await ctx.reply(message, { ...mainMessage.extra, ...extra });
 	}
 
 	@Command('settings')
@@ -96,5 +70,15 @@ export class MainController extends Controller {
 		await PromoCodeEntity.insert(promocodes);
 
 		await ctx.replyWithHTML(promocodeMessage, { disable_web_page_preview: true });
+	}
+
+	@Pattern(/^([\w\d]{8})$/)
+	static async activatePromocode(ctx: ContextMatch) {
+		const [, promoToken] = ctx.match;
+
+		const user = await UserEntity.getOrCreateFromCTX(ctx);
+
+		const { message, extra } = await PromoCodeEntity.checkPromoCode(promoToken, user);
+		await ctx.reply(message, extra);
 	}
 }
