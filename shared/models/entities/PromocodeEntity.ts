@@ -5,7 +5,7 @@ import { PromocodeStatus } from '../types';
 import { ModelEntity } from '../_prototype/ModelEntity';
 
 @Entity('promocodes')
-export class PromocodeEntity extends ModelEntity {
+export class PromoCodeEntity extends ModelEntity {
     
 	@PrimaryColumn()
 	token: string = uid(8);
@@ -21,4 +21,12 @@ export class PromocodeEntity extends ModelEntity {
 
 	@Column('integer')
 	balance: number = 1;
+
+	// ============================
+	// STATIC METHODS
+	// ============================
+
+	// static async checkPromoCode(token: string) {
+
+	// }
 }

@@ -1,5 +1,5 @@
 import { MessageBuilder, Message } from '../core/classes';
-import { PromocodeEntity, UserEntity } from '../models';
+import { PromoCodeEntity, UserEntity } from '../models';
 
 export function notFound(promoToken: string): Message {
 	const text = `Промокод: <b>${promoToken}</b> не найден!`;
@@ -13,8 +13,8 @@ export function alreadyUsed(promoToken: string): Message {
 	return MessageBuilder.createMessage(text);
 }
 
-export function successfullyActivated(promocode: PromocodeEntity, user: UserEntity): Message {
-	const text = `Вы успешно активировали Промокод на: <b>${promocode.balance}</b> отчет(ов).\n
+export function successfullyActivated(promoCode: PromoCodeEntity, user: UserEntity): Message {
+	const text = `Вы успешно активировали Промокод на: <b>${promoCode.balance}</b> отчет(ов).\n
 	Ваш текщий баланс: <b>${user.balance}</b>`;
 
 	return MessageBuilder.createMessage(text);

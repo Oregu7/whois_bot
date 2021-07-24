@@ -1,9 +1,9 @@
 import { Connection, ConnectionOptions, EntityManager, createConnection } from 'typeorm';
 
 import { config } from '../../config';
-import { UserEntity, PromocodeEntity } from '../../models';
+import { UserEntity, PromoCodeEntity } from '../../models';
 
-const ENTITIES = [UserEntity, PromocodeEntity];
+const ENTITIES = [UserEntity, PromoCodeEntity];
 
 export const singletonConfig: ConnectionOptions = {
 	type: 'mysql',

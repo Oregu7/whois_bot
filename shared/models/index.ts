@@ -1,2 +1,2 @@
 export * from './entities/UserEntity';
-export * from './entities/PromocodeEntity';
+export * from './entities/PromoCodeEntity';

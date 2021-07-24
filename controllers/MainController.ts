@@ -3,7 +3,7 @@ import { getConnection } from 'typeorm';
 
 import { Controller, Command, Pattern } from '../shared/core/bot/Controller';
 import { Messages } from '../shared/messages';
-import { PromocodeEntity, UserEntity } from '../shared/models';
+import { PromoCodeEntity, UserEntity } from '../shared/models';
 import { ContextMatch, PromocodeStatus } from '../shared/models/types';
 import { config } from '../shared/config';
 
@@ -25,7 +25,7 @@ export class MainController extends Controller {
 	
 		// 2.
 		const promoToken = text.slice(entities[0].length).trim();
-		const promocode = await PromocodeEntity.findOne({ token: promoToken });
+		const promocode = await PromoCodeEntity.findOne({ token: promoToken });
 		const { extra: mainMessageExtra } = Messages.main.start();
 
 		if (promocode === undefined) {
@@ -80,12 +80,12 @@ export class MainController extends Controller {
 	@Pattern(/^\/promo (\d+)$/)
 	static async createPromocodes(ctx: ContextMatch) {
 		const promocodesCount: number = Number(ctx.match[1]);
-		const promocodes: PromocodeEntity[] = [];
+		const promocodes: PromoCodeEntity[] = [];
 
 		let promocodeMessage = '';
 
 		for (let i = 0; i < promocodesCount; i++) {
-			const promocode = new PromocodeEntity();
+			const promocode = new PromoCodeEntity();
 			promocode.adminID = ctx.from!.id;
 
 			promocodeMessage += `<b>${i + 1}.</b> https://t.me/${config.bot.username}?start=${promocode.token}\n`;
@@ -93,7 +93,7 @@ export class MainController extends Controller {
 			promocodes.push(promocode);
 		}
 
-		await PromocodeEntity.insert(promocodes);
+		await PromoCodeEntity.insert(promocodes);
 
 		await ctx.replyWithHTML(promocodeMessage, { disable_web_page_preview: true });
 	}
