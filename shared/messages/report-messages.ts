@@ -2,6 +2,7 @@ import { Markup } from 'telegraf';
 
 import { MessageBuilder, Message } from '../core/classes';
 import { UserEntity } from '../models';
+import { CourtCase } from '../services/MosGorsudService';
 
 
 export function balance(user: UserEntity): Message {
@@ -24,4 +25,33 @@ export function buyReports(reportsCount: number): Message {
 	];
 
 	return MessageBuilder.createMessage(text, { inlineKeyboard: buttons });
+}
+
+export function notFound(): Message {
+	const text = `🚫 Отсутствует информация по запросу - пожалуйста скорректируйте запрос ✏️\n
+	Выбрать действия:`;
+
+	const buttons = [
+		[Markup.button.callback('📲 Введите ФИО для поиска', '.')],
+		[Markup.button.callback('🖌 Введите номер дела для поиска', '.')],
+	];
+
+	return MessageBuilder.createMessage(text, { inlineKeyboard: buttons });
+}
+
+export function generateReport(courtCases: CourtCase[]): Message {
+	const text = courtCases.map((courtCase: CourtCase) => {
+		const report = `<b>Запрос: ${courtCase.person} - ${courtCase.court}</b>
+		<b>Категория дела: ${courtCase.type}</b>
+		<b>Статус: ${courtCase.status}</b>
+		Номер дела: <a href="${courtCase.url}">${courtCase.caseNumber}</a>
+		Текущее состояние: ${courtCase.state}
+		Судья: ${courtCase.judge || '---'}
+		Статья: ${courtCase.codexArticle || '---'}
+		Категория дела: ${courtCase.category || '---'}`;
+
+		return report;
+	}).join('\n\n');
+
+	return MessageBuilder.createMessage(text);
 }

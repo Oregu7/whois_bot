@@ -1,14 +1,15 @@
 import { Context } from 'telegraf';
 
-import { Controller, Pattern } from '../shared/core/bot/Controller';
+import { Controller, Hears, OnUpdate } from '../shared/core/bot/Controller';
 import { Messages } from '../shared/messages';
 import { UserEntity } from '../shared/models';
 import { ContextMatch } from '../shared/models/types';
+import { MosGorsudService, SearchParams } from '../shared/services/MosGorsudService';
 
 
 export class ReportController extends Controller {
 
-	@Pattern(/^\d+ ₽ - (\d+) отчет(ов)?$/)
+	@Hears(/^\d+ ₽ - (\d+) отчет(ов)?$/)
 	static async buyReports(ctx: ContextMatch) {
 		const reportsCount: number = Number(ctx.match[1]);
 
@@ -24,7 +25,7 @@ export class ReportController extends Controller {
 		await ctx.reply(message, extra);
 	}
 
-	@Pattern('Остаток отчетов')
+	@Hears('Остаток отчетов')
 	static async showBalance(ctx: Context) {
 		const user = await UserEntity.findOne(ctx.from?.id);
 
@@ -33,9 +34,35 @@ export class ReportController extends Controller {
 		await ctx.reply(message, extra);
 	}
 
-	@Pattern('Промокод')
+	@Hears('Промокод')
 	static async promoCode(ctx: Context) {
 		const { message, extra } = Messages.report.promoCode();
+
+		await ctx.reply(message, extra);
+	}
+
+	@OnUpdate('message')
+	static async generateReport(ctx: Context) {
+		const text = (ctx.message as any).text ?? '';
+		const searchParams: SearchParams = {};
+
+		if (/^\d+$/.test(text)) {
+			searchParams.caseNumber = text;
+		} else {
+			searchParams.q = text;
+		}
+
+		const data = await MosGorsudService.search(searchParams);
+
+		if (data.length === 0) {
+			const { message, extra } = Messages.report.notFound();
+
+			await ctx.reply(message, extra);
+
+			return;
+		}
+
+		const { message, extra } = Messages.report.generateReport(data.slice(0, 5));
 
 		await ctx.reply(message, extra);
 	}

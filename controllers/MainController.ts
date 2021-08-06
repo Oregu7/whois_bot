@@ -1,6 +1,6 @@
 import { Context } from 'telegraf';
 
-import { Controller, Command, Pattern } from '../shared/core/bot/Controller';
+import { Controller, Command, Hears } from '../shared/core/bot/Controller';
 import { Messages } from '../shared/messages';
 import { PromoCodeEntity, UserEntity } from '../shared/models';
 import { ContextMatch } from '../shared/models/types';
@@ -36,7 +36,7 @@ export class MainController extends Controller {
 		await ctx.reply(message, extra);
 	}
 
-	@Pattern('Как пользоваться')
+	@Hears('Как пользоваться')
 	@Command('help')
 	static async help(ctx: Context) {
 		const { message, extra } = Messages.main.start();
@@ -51,7 +51,7 @@ export class MainController extends Controller {
 		await ctx.reply(message, extra);
 	}
 
-	@Pattern(/^\/promo (\d+)$/)
+	@Hears(/^\/promo (\d+)$/)
 	static async createPromocodes(ctx: ContextMatch) {
 		const promocodesCount: number = Number(ctx.match[1]);
 		const promocodes: PromoCodeEntity[] = [];
@@ -72,7 +72,7 @@ export class MainController extends Controller {
 		await ctx.replyWithHTML(promocodeMessage, { disable_web_page_preview: true });
 	}
 
-	@Pattern(/^([\w\d]{8})$/)
+	@Hears(/^([\w\d]{8})$/)
 	static async activatePromocode(ctx: ContextMatch) {
 		const [, promoToken] = ctx.match;
 

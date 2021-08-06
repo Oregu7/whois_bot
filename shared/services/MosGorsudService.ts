@@ -15,22 +15,29 @@ export interface CourtCase {
 	codexArticle?: string;
 }
 
+export interface SearchParams {
+	q?: string;
+	caseNumber?: number;
+	uid?: string;
+}
+
 // -------------------------------------
 export class MosGorsudService {
 	static readonly API_URL: string = 'https://mos-gorsud.ru';
 
-	static async search(searchText: string) {
+	static async search(options: SearchParams = {}) {
 		const url = `${this.API_URL}/search.php`;
 
 		const response = await axios.get(url, {
 			params: {
-				q: searchText,
+				...options,
+				formType: 'fullForm',
 				offset: 0,
 				limit: 15,
 			},
 		});
 
-		return this.parseData(response.data.message, searchText);
+		return this.parseData(response.data.message, options.q ?? '');
 	}
 
 	private static parseData(data: Record<string, any>[], searchText: string) {
