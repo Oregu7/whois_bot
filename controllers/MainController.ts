@@ -36,10 +36,24 @@ export class MainController extends Controller {
 		await ctx.reply(message, extra);
 	}
 
-	@Hears('Как пользоваться')
-	@Command('help')
+	@Hears(/^Как пользоваться$/)
 	static async help(ctx: Context) {
-		const { message, extra } = Messages.main.start();
+		const { message, extra } = Messages.main.help();
+
+		await ctx.reply(message, extra);
+	}
+
+	@Hears(/^faq$/i)
+	@Command('help')
+	static async faq(ctx: Context) {
+		const { message, extra } = Messages.main.faq();
+
+		await ctx.reply(message, extra);
+	}
+
+	@Hears(/^Сотрудничество$/)
+	static async cooperation(ctx: Context) {
+		const { message, extra } = Messages.main.cooperation();
 
 		await ctx.reply(message, extra);
 	}
