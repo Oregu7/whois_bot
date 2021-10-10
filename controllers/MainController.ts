@@ -36,14 +36,14 @@ export class MainController extends Controller {
 		await ctx.reply(message, extra);
 	}
 
-	@Hears(/^Как пользоваться$/)
+	@Hears(/^🆘 Как пользоваться$/iu)
 	static async help(ctx: Context) {
 		const { message, extra } = Messages.main.help();
 
 		await ctx.reply(message, extra);
 	}
 
-	@Hears(/^faq$/i)
+	@Hears(/^📍 FAQ$/iu)
 	@Command('help')
 	static async faq(ctx: Context) {
 		const { message, extra } = Messages.main.faq();
@@ -64,6 +64,8 @@ export class MainController extends Controller {
 
 		await ctx.reply(message, extra);
 	}
+
+	// ---------------------
 
 	@Hears(/^\/promo (\d+)$/)
 	static async createPromocodes(ctx: ContextMatch) {

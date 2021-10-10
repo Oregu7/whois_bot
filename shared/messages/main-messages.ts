@@ -18,10 +18,13 @@ export function start(): Message {
 		// 	Markup.button.text('1000 ₽ - 30 отчетов'),
 		// ],
 		[
-			Markup.button.text('FAQ'),
-			Markup.button.text('Как пользоваться'),
+			Markup.button.text('📍 FAQ'),
+			Markup.button.text('🆘 Как пользоваться'),
 		],
-		[Markup.button.text('Сотрудничество')],
+		[
+			Markup.button.text('💥 Помощь с пробивом'),
+			Markup.button.text('🚨 Помощь с недвижимостью'),
+		],
 	];
 
 	return MessageBuilder.createMessage(text, { keyboard });

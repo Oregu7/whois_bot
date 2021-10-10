@@ -33,7 +33,7 @@ export class MosGorsudService {
 				...options,
 				formType: 'fullForm',
 				offset: 0,
-				limit: 15,
+				limit: 30,
 			},
 		});
 
