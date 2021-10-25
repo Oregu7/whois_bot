@@ -19,6 +19,7 @@ export interface SearchParams {
 	q?: string;
 	caseNumber?: number;
 	uid?: string;
+	page?: number;
 }
 
 // -------------------------------------
@@ -42,7 +43,10 @@ export class MosGorsudService {
 			},
 		});
 
-		return this.parseData(response.data.message, options.q ?? '');
+		const list = this.parseData(response.data.message, options.q ?? '');
+		const total = Number(response.data.total);
+
+		return { list, pages: Math.ceil(total / 10), total };
 	}
 
 	private static parseData(data: Record<string, any>[], searchText: string) {

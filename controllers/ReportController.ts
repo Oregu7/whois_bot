@@ -52,9 +52,9 @@ export class ReportController extends Controller {
 			searchParams.q = text;
 		}
 
-		const data = await MosGorsudService.search(searchParams);
+		const { list, pages } = await MosGorsudService.search(searchParams);
 
-		if (data.length === 0) {
+		if (list.length === 0) {
 			const { message, extra } = Messages.report.notFound();
 
 			await ctx.reply(message, extra);
@@ -62,7 +62,7 @@ export class ReportController extends Controller {
 			return;
 		}
 
-		const { message, extra } = Messages.report.generateReport(data.slice(0, 10));
+		const { message, extra } = Messages.report.generateReport(list.slice(0, 10), pages);
 
 		await ctx.reply(message, extra);
 	}

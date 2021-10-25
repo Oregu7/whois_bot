@@ -3,6 +3,7 @@ import { Markup } from 'telegraf';
 import { MessageBuilder, Message } from '../core/classes';
 import { UserEntity } from '../models';
 import { CourtCase } from '../services/MosGorsudService';
+import { Pagination } from '../utils/pagination';
 
 
 export function balance(user: UserEntity): Message {
@@ -39,7 +40,7 @@ export function notFound(): Message {
 	return MessageBuilder.createMessage(text, { inlineKeyboard: buttons });
 }
 
-export function generateReport(courtCases: CourtCase[]): Message {
+export function generateReport(courtCases: CourtCase[], pages: number): Message {
 	const text = courtCases.map((courtCase: CourtCase) => {
 		const report = `<b>Запрос: ${courtCase.person} - ${courtCase.court}</b>
 		<b>Категория дела: ${courtCase.type}</b>
@@ -53,5 +54,8 @@ export function generateReport(courtCases: CourtCase[]): Message {
 		return report;
 	}).join('\n\n');
 
-	return MessageBuilder.createMessage(text);
+	const pagination = new Pagination('report');
+	const buttons = pagination.createPagesInlineKeyboard('search', 1, pages);
+
+	return MessageBuilder.createMessage(text, { inlineKeyboard: [buttons] });
 }
