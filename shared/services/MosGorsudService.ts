@@ -32,8 +32,13 @@ export class MosGorsudService {
 			params: {
 				...options,
 				formType: 'fullForm',
-				offset: 0,
-				limit: 30,
+			},
+			headers: {
+				'Cache-Control': 'no-cache',
+            	'Connection': 'keep-alive',
+            	'Upgrade-Insecure-Requests': '1',
+            	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/28.0.1500.95 Safari/537.36',
+				'Content-Type': 'application/json; charset=UTF-8',
 			},
 		});
 

@@ -62,7 +62,7 @@ export class ReportController extends Controller {
 			return;
 		}
 
-		const { message, extra } = Messages.report.generateReport(data.slice(0, 5));
+		const { message, extra } = Messages.report.generateReport(data.slice(0, 10));
 
 		await ctx.reply(message, extra);
 	}
