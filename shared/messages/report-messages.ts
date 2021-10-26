@@ -1,5 +1,6 @@
 import { Markup } from 'telegraf';
 
+import { PAGINATE_REPORT_ACTION } from '../core/actions/Action';
 import { MessageBuilder, Message } from '../core/classes';
 import { UserEntity } from '../models';
 import { CourtCase } from '../services/MosGorsudService';
@@ -40,7 +41,9 @@ export function notFound(): Message {
 	return MessageBuilder.createMessage(text, { inlineKeyboard: buttons });
 }
 
-export function generateReport(courtCases: CourtCase[], pages: number): Message {
+export function generateReport(courtCases: CourtCase[], params: { page: number; pages: number; searchId: number }): Message {
+	const { page, pages, searchId } = params;
+
 	const text = courtCases.map((courtCase: CourtCase) => {
 		const report = `<b>Запрос: ${courtCase.person} - ${courtCase.court}</b>
 		<b>Категория дела: ${courtCase.type}</b>
@@ -54,8 +57,8 @@ export function generateReport(courtCases: CourtCase[], pages: number): Message 
 		return report;
 	}).join('\n\n');
 
-	const pagination = new Pagination('report');
-	const buttons = pagination.createPagesInlineKeyboard('search', 1, pages);
+	const pagination = new Pagination(PAGINATE_REPORT_ACTION.name);
+	const buttons = pagination.createPagesInlineKeyboard(String(searchId), page, pages);
 
 	return MessageBuilder.createMessage(text, { inlineKeyboard: [buttons] });
 }

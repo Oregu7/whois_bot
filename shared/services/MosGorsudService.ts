@@ -32,6 +32,8 @@ export class MosGorsudService {
 		const response = await axios.get(url, {
 			params: {
 				...options,
+				limit: 10,
+				offset: (options.page! - 1) * 10,
 				formType: 'fullForm',
 			},
 			headers: {
