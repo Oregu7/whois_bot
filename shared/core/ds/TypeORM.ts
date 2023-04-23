@@ -6,9 +6,9 @@ import { UserEntity, PromoCodeEntity, SearchHistoryEntity } from '../../models';
 const ENTITIES = [UserEntity, PromoCodeEntity, SearchHistoryEntity];
 
 export const singletonConfig: ConnectionOptions = {
-	type: 'mysql',
+	type: 'postgres',
 	host: config.database.host,
-	port: 3306,
+	port: config.database.port,
 	database: config.database.name,
 	username: config.database.user,
 	password: config.database.password,
